@@ -55,12 +55,12 @@ namespace CreationModelPlugin
             XYZ dy = new XYZ(0, 20, 0);
             LocationCurve locationCurve = walls[0].Location as LocationCurve;
             XYZ point = locationCurve.Curve.GetEndPoint(0);
-            XYZ p1 = point + dt;
-            XYZ p2 = p1 + dz;
-            XYZ p3 = p1 + dy;
-            XYZ origin = point;
-            XYZ vx = XYZ.BasisY;
-            XYZ vy = XYZ.BasisZ;
+            //XYZ p1 = point + dt;
+            //XYZ p2 = p1 + dz;
+            //XYZ p3 = p1 + dy;
+            XYZ origin = point+dt;
+            XYZ vy = XYZ.BasisY;
+            XYZ vz = XYZ.BasisZ;
             //List<XYZ> points = new List<XYZ>();
             //points.Add(new XYZ(-dt, -dt, 0));
             //points.Add(new XYZ(dt, -dt, 0));
@@ -81,15 +81,15 @@ namespace CreationModelPlugin
             //}
 
             CurveArray curve = new CurveArray();
-            curve.Append(Line.CreateBound(p1, p1 + new XYZ(0, 20, 20)));
-            curve.Append(Line.CreateBound(p1 + new XYZ(0, 20, 20), p1 + new XYZ(0, 40, 0)));
+            curve.Append(Line.CreateBound(origin, origin + new XYZ(0, 20, 20)));
+            curve.Append(Line.CreateBound(origin + new XYZ(0, 20, 20), origin + new XYZ(0, 40, 0)));
 
 
             var av = doc.ActiveView;
             Transaction transaction = new Transaction(doc, "Создание крыши");
             transaction.Start();
 
-            ReferencePlane plane = doc.Create.NewReferencePlane(origin, origin + vx, origin + vy, av);
+            ReferencePlane plane = doc.Create.NewReferencePlane(origin, origin + vz, origin + vy, av);
 
             ExtrusionRoof extrusionRoof = doc.Create.NewExtrusionRoof(curve, plane, level, roofType, 0, 3);
 
