@@ -55,51 +55,25 @@ namespace CreationModelPlugin
             XYZ dy = new XYZ(0, 20, 0);
             LocationCurve locationCurve = walls[0].Location as LocationCurve;
             XYZ point = locationCurve.Curve.GetEndPoint(0);
-            //XYZ p1 = point + dt;
-            //XYZ p2 = p1 + dz;
-            //XYZ p3 = p1 + dy;
-            XYZ origin = point+dt;
+            double l = (walls[0].Location as LocationCurve).Curve.Length + df*2;
+            double w = ((walls[1].Location as LocationCurve).Curve.Length / 2)+df;
+            XYZ origin = point + dt;
             XYZ vy = XYZ.BasisY;
             XYZ vz = XYZ.BasisZ;
-            //List<XYZ> points = new List<XYZ>();
-            //points.Add(new XYZ(-dt, -dt, 0));
-            //points.Add(new XYZ(dt, -dt, 0));
-            //points.Add(new XYZ(dt, dt, 0));
-            //points.Add(new XYZ(-dt, dt, 0));
-            //points.Add(new XYZ(-dt, -dt, 0));
-
-            //Application application = doc.Application;
-            //CurveArray footprint = application.Create.NewCurveArray();
-
-            //for (int i = 0; i < 4; i++)
-            //{
-            //    LocationCurve curve = walls[i].Location as LocationCurve;
-            //    XYZ p1 = curve.Curve.GetEndPoint(0);
-            //    XYZ p2 = curve.Curve.GetEndPoint(1);
-            //    Line line = Line.CreateBound(p1 + points[i], p2 + points[i+1]);
-            //    footprint.Append(line);
-            //}
 
             CurveArray curve = new CurveArray();
-            curve.Append(Line.CreateBound(origin, origin + new XYZ(0, 20, 20)));
-            curve.Append(Line.CreateBound(origin + new XYZ(0, 20, 20), origin + new XYZ(0, 40, 0)));
+            curve.Append(Line.CreateBound(origin, origin + new XYZ(0, w, 5)));
+            curve.Append(Line.CreateBound(origin + new XYZ(0, w, 5), origin + new XYZ(0, w*2, 0)));
 
 
             var av = doc.ActiveView;
             Transaction transaction = new Transaction(doc, "Создание крыши");
             transaction.Start();
 
-            ReferencePlane plane = doc.Create.NewReferencePlane(origin, origin + vz, origin + vy, av);
+            ReferencePlane plane = doc.Create.NewReferencePlane2(origin, origin - vz, origin + vy, av);
 
-            ExtrusionRoof extrusionRoof = doc.Create.NewExtrusionRoof(curve, plane, level, roofType, 0, 3);
+            ExtrusionRoof extrusionRoof = doc.Create.NewExtrusionRoof(curve, plane, level, roofType, 0, l);
 
-            //ModelCurveArray footPrintToModelCurveMapping = new ModelCurveArray();
-            //FootPrintRoof footprintRoof = doc.Create.NewFootPrintRoof(footprint, level, roofType, out footPrintToModelCurveMapping);
-            //foreach (ModelCurve modelCurve in footPrintToModelCurveMapping)
-            //{
-            //    footprintRoof.set_DefinesSlope(modelCurve, true);
-            //    footprintRoof.set_SlopeAngle(modelCurve, 0.5);
-            //}
             transaction.Commit();
 
         }
